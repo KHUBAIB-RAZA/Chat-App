@@ -1,6 +1,6 @@
 import { createContext } from "react";
-import  axios from 'axios'
-import { useState , useEffect} from "react";
+import axios from 'axios'
+import { useState, useEffect } from "react";
 import toast from 'react-hot-toast'
 import { io } from 'socket.io-client'
 
@@ -18,16 +18,18 @@ export const AuthProvider = ({ children }) => {
     const checkAuth = async () => {
         try {
             const { data } = await axios.get("/api/auth/check");
-            if (data.success) {
 
-                setAuthUser(data.user)
-                connectSocket(data.user)
+            if (data.success) {
+                setAuthUser(data.user);
+                connectSocket(data.user);
+            } else {
+                logout(); // auto logout on failed check
             }
+        } catch (error) {
+            logout(); // force logout on auth error
         }
-        catch (error) {
-            toast.error(error.message)
-        }
-    }
+    };
+
 
 
     // Login function to handle user authentication and socket connection
@@ -52,32 +54,33 @@ export const AuthProvider = ({ children }) => {
 
 
     // Logout function to handle user logout and socket disconnection
-    const logout = async () => {
+    const logout = () => {
         localStorage.removeItem("token");
-        setToken(null);
+        axios.defaults.headers.common["token"] = null;
         setAuthUser(null);
         setOnlineUsers([]);
-        axios.defaults.headers.common["token"] = null;
-        toast.success("Logged out successfully")
-        socket.disconnect();
-    }
+        if (socket) socket.disconnect();
+        navigate("/login"); // force redirect
+        toast.success("Logged out successfully");
+    };
+
 
 
     // Update profile function to handle user profile updates
     const updateProfile = async (body) => {
         try {
-            const { data } = await axios.put("/api/auth/update-profile", body); 
+            const { data } = await axios.put("/api/auth/update-profile", body);
             if (data.success) {
-            
-            setAuthUser(data.user);
-            toast.success("Profile updated successfully")
+
+                setAuthUser(data.user);
+                toast.success("Profile updated successfully")
             }
-        } 
+        }
         catch (error) {
             toast.error(error.message)
         }
     }
-    
+
 
 
 
