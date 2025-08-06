@@ -11,7 +11,6 @@ const Sidebar = () => {
     const { logout, onlineUsers } = useContext(AuthContext);
     const [input, setinput] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-
     const navigate = useNavigate();
     const filteredUsers = input ? users.filter((user) => user.fullName.toLowerCase()
         .includes(input.toLowerCase())) : users;
@@ -62,7 +61,6 @@ const Sidebar = () => {
                             </div>
                         )}
                     </div>
-
                 </div>
 
 

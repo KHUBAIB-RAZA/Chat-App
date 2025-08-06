@@ -61,7 +61,7 @@ useEffect(() => {
         <p className='flex-1 text-lg text-white flex items-center gap-2'> {selectedUser.fullName}
           {onlineUsers.includes(selectedUser._id) &&<span className="w-2 h-2 rounded-full bg-green-500"></span>}
            </p>
-        <img onClick={() => setselectedUser(null)} src={assets.arrow_icon} alt="" className='w-6 md:w-8 cursor-pointer md:hidden block' /> </div>
+        <img onClick={() => setselectedUser(null)} src={assets.arrow_icon} alt="" className='md:w-8 cursor-pointer' /> </div>
       <div className='flex flex-col h-[calc(100%-120px)] overflow-y-scroll p-3 pb-6'>
         {messages.map((msg, index) => (
           <div key={index} className={`flex items-end gap-2 justify-end ${msg.senderId !== authUser._id &&

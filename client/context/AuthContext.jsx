@@ -1,17 +1,12 @@
 import { createContext } from "react";
-import axios from 'axios'
-import { useState, useEffect } from "react";
+import  axios from 'axios'
+import { useState , useEffect} from "react";
 import toast from 'react-hot-toast'
 import { io } from 'socket.io-client'
-
-import { useNavigate } from 'react-router-dom';
-const navigate = useNavigate();
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 axios.defaults.baseURL = backendUrl;
 export const AuthContext = createContext();
-
-
 export const AuthProvider = ({ children }) => {
     const [token, setToken] = useState(localStorage.getItem("token"));
     const [authUser, setAuthUser] = useState(null);
@@ -23,18 +18,16 @@ export const AuthProvider = ({ children }) => {
     const checkAuth = async () => {
         try {
             const { data } = await axios.get("/api/auth/check");
-
             if (data.success) {
-                setAuthUser(data.user);
-                connectSocket(data.user);
-            } else {
-                logout(); // auto logout on failed check
-            }
-        } catch (error) {
-            logout(); // force logout on auth error
-        }
-    };
 
+                setAuthUser(data.user)
+                connectSocket(data.user)
+            }
+        }
+        catch (error) {
+            toast.error(error.message)
+        }
+    }
 
 
     // Login function to handle user authentication and socket connection
@@ -59,33 +52,32 @@ export const AuthProvider = ({ children }) => {
 
 
     // Logout function to handle user logout and socket disconnection
-    const logout = () => {
+    const logout = async () => {
         localStorage.removeItem("token");
-        axios.defaults.headers.common["token"] = null;
+        setToken(null);
         setAuthUser(null);
         setOnlineUsers([]);
-        if (socket) socket.disconnect();
-        navigate("/login"); // force redirect
-        toast.success("Logged out successfully");
-    };
-
+        axios.defaults.headers.common["token"] = null;
+        toast.success("Logged out successfully")
+        socket.disconnect();
+    }
 
 
     // Update profile function to handle user profile updates
     const updateProfile = async (body) => {
         try {
-            const { data } = await axios.put("/api/auth/update-profile", body);
+            const { data } = await axios.put("/api/auth/update-profile", body); 
             if (data.success) {
-
-                setAuthUser(data.user);
-                toast.success("Profile updated successfully")
+            
+            setAuthUser(data.user);
+            toast.success("Profile updated successfully")
             }
-        }
+        } 
         catch (error) {
             toast.error(error.message)
         }
     }
-
+    
 
 
 
