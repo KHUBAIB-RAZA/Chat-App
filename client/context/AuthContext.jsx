@@ -4,9 +4,14 @@ import { useState, useEffect } from "react";
 import toast from 'react-hot-toast'
 import { io } from 'socket.io-client'
 
+import { useNavigate } from 'react-router-dom';
+const navigate = useNavigate();
+
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 axios.defaults.baseURL = backendUrl;
 export const AuthContext = createContext();
+
+
 export const AuthProvider = ({ children }) => {
     const [token, setToken] = useState(localStorage.getItem("token"));
     const [authUser, setAuthUser] = useState(null);
